@@ -19,6 +19,9 @@ def pascal_triangle(n):
       >>> pascal_triangle(5)
       [[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]
     """
+    if n <= 0:
+        return []
+
     result = [[1]]
 
     for _ in range(n - 1):

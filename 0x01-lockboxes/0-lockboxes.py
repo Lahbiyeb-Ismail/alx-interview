@@ -17,15 +17,15 @@ def canUnlockAll(boxes):
       bool: True if all lockboxes can be unlocked, False otherwise.
     """
 
-    def dfs(lockbox):
-        if visited[lockbox]:
-            return
-        visited[lockbox] = True
-        for key in boxes[lockbox]:
-            dfs(key)
+    opened = set()
+    stack = [0]
 
-    n = len(boxes)
-    visited = [False] * n
-    dfs(0)
+    while stack:
+        box = stack.pop()
+        if box not in opened:
+            opened.add(box)
+            for key in boxes[box]:
+                if key < len(boxes):
+                    stack.append(key)
 
-    return all(visited)
+    return len(opened) == len(boxes)

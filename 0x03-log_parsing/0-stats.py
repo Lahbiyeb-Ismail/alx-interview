@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+"""
+This function prints the file size and the count of each status code.
+It takes no arguments and has no return value
+"""
+
 import re
 import sys
 from collections import defaultdict
@@ -16,7 +21,18 @@ log_pattern = re.compile(
 
 
 def print_statistics():
-    """Print the statistics."""
+    """Print the statistics.
+
+    This function prints the file size and the count of each status code.
+    It takes no arguments and has no return value.
+
+    Example usage:
+    >>> print_statistics()
+    File size: 1024
+    200: 10
+    404: 5
+    500: 2
+    """
     print(f"File size: {total_file_size}")
     for code in sorted(status_code_counts.keys()):
         print(f"{code}: {status_code_counts[code]}")

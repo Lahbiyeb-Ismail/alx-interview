@@ -25,7 +25,8 @@ def parse_log_line(line):
         line (str): A single log line.
 
     Returns:
-        tuple: (status_code, file_size) if the line is valid, otherwise (None, None).
+        tuple: (status_code, file_size) if the line is valid,
+        otherwise (None, None).
     """
     parts = line.split()
     if len(parts) < 2:
@@ -38,38 +39,33 @@ def parse_log_line(line):
         return None, None
 
 
-def main():
-    total_file_size = 0
-    line_count = 0
-    status_code_counts = {
-        "200": 0,
-        "301": 0,
-        "400": 0,
-        "401": 0,
-        "403": 0,
-        "404": 0,
-        "405": 0,
-        "500": 0,
-    }
+total_file_size = 0
+line_count = 0
+status_code_counts = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0,
+}
 
-    try:
-        for line in sys.stdin:
-            status_code, file_size = parse_log_line(line)
-            if status_code and file_size is not None:
-                total_file_size += file_size
-                if status_code in status_code_counts:
-                    status_code_counts[status_code] += 1
-                line_count += 1
+try:
+    for line in sys.stdin:
+        status_code, file_size = parse_log_line(line)
+        if status_code and file_size is not None:
+            total_file_size += file_size
+            if status_code in status_code_counts:
+                status_code_counts[status_code] += 1
+            line_count += 1
 
-                if line_count == 10:
-                    print_statistics(status_code_counts, total_file_size)
-                    line_count = 0
+            if line_count == 10:
+                print_statistics(status_code_counts, total_file_size)
+                line_count = 0
 
-    except KeyboardInterrupt:
-        pass
-    finally:
-        print_statistics(status_code_counts, total_file_size)
-
-
-if __name__ == "__main__":
-    main()
+except KeyboardInterrupt:
+    pass
+finally:
+    print_statistics(status_code_counts, total_file_size)

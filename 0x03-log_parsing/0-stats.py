@@ -1,63 +1,56 @@
 #!/usr/bin/python3
 
-"""
-This function prints the file size and the count of each status code.
-It takes no arguments and has no return value
-"""
-
-import re
 import sys
-from collections import defaultdict
 
 
-def print_statistics():
-    """Print the statistics.
-
-    This function prints the file size and the count of each status code.
-    It takes no arguments and has no return value.
-
-    Example usage:
-    >>> print_statistics()
-    File size: 1024
-    200: 10
-    404: 5
-    500: 2
+def print_msg(dict_sc, total_file_size):
     """
-    print(f"File size: {total_file_size}")
-    for code in sorted(status_code_counts.keys()):
-        print(f"{code}: {status_code_counts[code]}")
+    Method to print
+    Args:
+        dict_sc: dict of status codes
+        total_file_size: total of the file
+    Returns:
+        Nothing
+    """
+
+    print("File size: {}".format(total_file_size))
+    for key, val in sorted(dict_sc.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
 
 
-# Initialize variables
 total_file_size = 0
-status_code_counts = defaultdict(int)
-line_count = 0
-
-# Regular expression to match the log line format
-log_pattern = re.compile(
-    r'^\S+ - \[\S+ \S+\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)$'
-)
-
+code = 0
+counter = 0
+dict_sc = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0,
+}
 
 try:
     for line in sys.stdin:
-        line = line.strip()
-        match = log_pattern.match(line)
-        if match:
-            status_code = match.group(1)
-            file_size = int(match.group(2))
+        parsed_line = line.split()  # ✄ trimming
+        parsed_line = parsed_line[::-1]  # inverting
 
-            # Update metrics
-            total_file_size += file_size
-            status_code_counts[status_code] += 1
-            line_count += 1
+        if len(parsed_line) > 2:
+            counter += 1
 
-            # Print statistics every 10 lines
-            if line_count % 10 == 0:
-                print_statistics()
+            if counter <= 10:
+                total_file_size += int(parsed_line[0])  # file size
+                code = parsed_line[1]  # status code
 
-except KeyboardInterrupt:
-    pass
+                if code in dict_sc.keys():
+                    dict_sc[code] += 1
+
+            if counter == 10:
+                print_msg(dict_sc, total_file_size)
+                counter = 0
+
 finally:
-    # Print final statistics
-    print_statistics()
+    print_msg(dict_sc, total_file_size)

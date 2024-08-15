@@ -9,16 +9,6 @@ import re
 import sys
 from collections import defaultdict
 
-# Initialize variables
-total_file_size = 0
-status_code_counts = defaultdict(int)
-line_count = 0
-
-# Regular expression to match the log line format
-log_pattern = re.compile(
-    r'^\S+ - \[\S+ \S+\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)$'
-)
-
 
 def print_statistics():
     """Print the statistics.
@@ -36,6 +26,17 @@ def print_statistics():
     print(f"File size: {total_file_size}")
     for code in sorted(status_code_counts.keys()):
         print(f"{code}: {status_code_counts[code]}")
+
+
+# Initialize variables
+total_file_size = 0
+status_code_counts = defaultdict(int)
+line_count = 0
+
+# Regular expression to match the log line format
+log_pattern = re.compile(
+    r'^\S+ - \[\S+ \S+\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)$'
+)
 
 
 try:

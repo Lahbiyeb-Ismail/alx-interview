@@ -10,27 +10,35 @@ def validUTF8(data):
     Determines if a given data set represents a valid UTF-8 encoding.
 
     Args:
-        data (list of int): A list of integers where each integer represents
+        data (list[int]): A list of integers where each integer represents
         a byte (8 least significant bits).
 
     Returns:
         bool: True if data is a valid UTF-8 encoding, else False.
     """
-    bytes_remaining = 0
+    continuation_bytes_needed = 0
+
+    # Define bit patterns for UTF-8 encoding
+    SIGNIFICANT_BIT = 1 << 7  # 10000000
+    SECOND_SIGNI_BIT = 1 << 6  # 01000000
 
     for byte in data:
-        if bytes_remaining == 0:
-            if (byte >> 5) == 0b110:
-                bytes_remaining = 1
-            elif (byte >> 4) == 0b1110:
-                bytes_remaining = 2
-            elif (byte >> 3) == 0b11110:
-                bytes_remaining = 3
-            elif byte >> 7:
+        leading_one_mask = 1 << 7
+
+        if continuation_bytes_needed == 0:
+            while leading_one_mask & byte:
+                continuation_bytes_needed += 1
+                leading_one_mask >>= 1
+
+            if continuation_bytes_needed == 0:
+                continue
+
+            if continuation_bytes_needed == 1 or continuation_bytes_needed > 4:
                 return False
         else:
-            if (byte >> 6) != 0b10:
+            if not (byte & SIGNIFICANT_BIT and not (byte & SECOND_SIGNI_BIT)):
                 return False
-            bytes_remaining -= 1
 
-    return bytes_remaining == 0
+        continuation_bytes_needed -= 1
+
+    return continuation_bytes_needed == 0

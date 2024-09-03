@@ -10,24 +10,26 @@ if (process.argv.length !== 3) {
 const movieId = process.argv[2];
 const apiUrl = "https://swapi-api.alx-tools.com/api/films/" + movieId;
 
-request(apiUrl, (error, _response, body) => {
-	if (error) {
-		console.error("Error fetching movie data:", error);
-		return;
-	}
+request(apiUrl, (err, _res, body) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
 
-	const movieData = JSON.parse(body);
-	const characterUrls = movieData.characters;
-
-	for (const characterUrl of characterUrls) {
-		request(characterUrl, (error, _response, body) => {
-			if (error) {
-				console.error("Error fetching character data:", error);
-				return;
-			}
-
-			const characterData = JSON.parse(body);
-			console.log(characterData.name);
-		});
-	}
+  const characters = JSON.parse(body).characters;
+  getMovieCharacter(characters, 0);
 });
+
+const getMovieCharacter = (characters, index) => {
+  if (characters.length === index) return;
+  
+  request(characters[index], (err, _res, body) => {
+    if (err){
+      console.log(err)
+      return;
+    }
+
+    console.log(JSON.parse(body).name);
+    getMovieCharacter(characters, index + 1);
+  });
+};

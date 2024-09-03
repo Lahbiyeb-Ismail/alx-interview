@@ -2,15 +2,30 @@
 
 const request = require("request");
 
-const movieId = process.argv[2];
-const apiUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
+if (process.argv.length !== 3) {
+	console.error("Usage: node script.js <Movie ID>");
+	process.exit(1);
+}
 
-request(apiUrl, (_error, _response, body) => {
+const movieId = process.argv[2];
+const apiUrl = "https://swapi-api.alx-tools.com/api/films/" + movieId;
+
+request(apiUrl, (error, _response, body) => {
+	if (error) {
+		console.error("Error fetching movie data:", error);
+		return;
+	}
+
 	const movieData = JSON.parse(body);
 	const characterUrls = movieData.characters;
 
 	for (const characterUrl of characterUrls) {
-		request(characterUrl, (_error, _response, body) => {
+		request(characterUrl, (error, _response, body) => {
+			if (error) {
+				console.error("Error fetching character data:", error);
+				return;
+			}
+
 			const characterData = JSON.parse(body);
 			console.log(characterData.name);
 		});

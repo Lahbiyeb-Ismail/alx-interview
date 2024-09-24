@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 Calculate the perimeter of an island represented by
 1s in a grid of 0s and 1s.
